@@ -40,5 +40,6 @@ message OutputContext {
 
 message Context {
   string identity = 1;
-  string confidence = 3;
+  string confidence = 2;
+  string sessionId = 3;
 }
