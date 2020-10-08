@@ -3,20 +3,21 @@ syntax = "proto3";
 package proto;
 
 option go_package = ".;proto";
-option java_package = "com.echo.sdk";
+option java_package = "com.echo.proto";
 option java_outer_classname = "DialogProto";
 
 import "google/protobuf/struct.proto";
+import "audio.proto";
 
 service Dialog {
-  rpc DetectIntent (Detect) returns (Intent);
+  rpc DetectTextIntent (Detect) returns (Intent);
+  rpc DetectAudioIntentStream (stream AudioSample) returns (Intent);
 }
 
 message Detect {
   string text = 1;
-  bytes audio = 2;
-  string identity = 3;
-  string source = 4;
+  string identity = 2;
+  string source = 3;
 }
 
 message Intent {

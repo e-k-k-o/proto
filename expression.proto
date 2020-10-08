@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = ".;proto";
+option java_package = "com.echo.proto";
+option java_outer_classname = "ExpressionProto";
+
+import "audio.proto";
+
+service Expression {
+  rpc AudioStream (StreamSource) returns (stream AudioSample);
+}
+
+message StreamSource {
+  string id = 1;
+}
