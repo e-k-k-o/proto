@@ -8,6 +8,7 @@ option java_outer_classname = "DialogProto";
 
 import "google/protobuf/struct.proto";
 import "audio.proto";
+import "context.proto";
 
 service Dialog {
   rpc DetectTextIntent (Detect) returns (Intent);
@@ -37,10 +38,4 @@ message Intent {
 message OutputContext {
   string name = 1;
   int32 lifespan = 2;
-}
-
-message Context {
-  string identity = 1;
-  string confidence = 2;
-  string sessionId = 3;
 }

@@ -6,6 +6,9 @@ option go_package = ".;proto";
 option java_package = "com.echo.proto";
 option java_outer_classname = "AudioProto";
 
+import "context.proto";
+
 message AudioSample {
   bytes data = 1;
+  Context context = 2;
 }
