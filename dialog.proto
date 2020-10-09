@@ -18,6 +18,7 @@ message Detect {
   string text = 1;
   string identity = 2;
   string source = 3;
+  Context context = 4;
 }
 
 message Intent {
