@@ -18,7 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DialogClient interface {
 	DetectTextIntent(ctx context.Context, in *Detect, opts ...grpc.CallOption) (*Intent, error)
-	DetectAudioIntent(ctx context.Context, in *AudioSample, opts ...grpc.CallOption) (*Intent, error)
+	DetectAudioIntentStream(ctx context.Context, opts ...grpc.CallOption) (Dialog_DetectAudioIntentStreamClient, error)
 }
 
 type dialogClient struct {
@@ -38,13 +38,38 @@ func (c *dialogClient) DetectTextIntent(ctx context.Context, in *Detect, opts ..
 	return out, nil
 }
 
-func (c *dialogClient) DetectAudioIntent(ctx context.Context, in *AudioSample, opts ...grpc.CallOption) (*Intent, error) {
-	out := new(Intent)
-	err := c.cc.Invoke(ctx, "/proto.Dialog/DetectAudioIntent", in, out, opts...)
+func (c *dialogClient) DetectAudioIntentStream(ctx context.Context, opts ...grpc.CallOption) (Dialog_DetectAudioIntentStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Dialog_serviceDesc.Streams[0], "/proto.Dialog/DetectAudioIntentStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &dialogDetectAudioIntentStreamClient{stream}
+	return x, nil
+}
+
+type Dialog_DetectAudioIntentStreamClient interface {
+	Send(*AudioSample) error
+	CloseAndRecv() (*Intent, error)
+	grpc.ClientStream
+}
+
+type dialogDetectAudioIntentStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *dialogDetectAudioIntentStreamClient) Send(m *AudioSample) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *dialogDetectAudioIntentStreamClient) CloseAndRecv() (*Intent, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(Intent)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // DialogServer is the server API for Dialog service.
@@ -52,7 +77,7 @@ func (c *dialogClient) DetectAudioIntent(ctx context.Context, in *AudioSample, o
 // for forward compatibility
 type DialogServer interface {
 	DetectTextIntent(context.Context, *Detect) (*Intent, error)
-	DetectAudioIntent(context.Context, *AudioSample) (*Intent, error)
+	DetectAudioIntentStream(Dialog_DetectAudioIntentStreamServer) error
 	mustEmbedUnimplementedDialogServer()
 }
 
@@ -63,8 +88,8 @@ type UnimplementedDialogServer struct {
 func (UnimplementedDialogServer) DetectTextIntent(context.Context, *Detect) (*Intent, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DetectTextIntent not implemented")
 }
-func (UnimplementedDialogServer) DetectAudioIntent(context.Context, *AudioSample) (*Intent, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DetectAudioIntent not implemented")
+func (UnimplementedDialogServer) DetectAudioIntentStream(Dialog_DetectAudioIntentStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method DetectAudioIntentStream not implemented")
 }
 func (UnimplementedDialogServer) mustEmbedUnimplementedDialogServer() {}
 
@@ -97,22 +122,30 @@ func _Dialog_DetectTextIntent_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Dialog_DetectAudioIntent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AudioSample)
-	if err := dec(in); err != nil {
+func _Dialog_DetectAudioIntentStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(DialogServer).DetectAudioIntentStream(&dialogDetectAudioIntentStreamServer{stream})
+}
+
+type Dialog_DetectAudioIntentStreamServer interface {
+	SendAndClose(*Intent) error
+	Recv() (*AudioSample, error)
+	grpc.ServerStream
+}
+
+type dialogDetectAudioIntentStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *dialogDetectAudioIntentStreamServer) SendAndClose(m *Intent) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *dialogDetectAudioIntentStreamServer) Recv() (*AudioSample, error) {
+	m := new(AudioSample)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(DialogServer).DetectAudioIntent(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/proto.Dialog/DetectAudioIntent",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DialogServer).DetectAudioIntent(ctx, req.(*AudioSample))
-	}
-	return interceptor(ctx, in, info, handler)
+	return m, nil
 }
 
 var _Dialog_serviceDesc = grpc.ServiceDesc{
@@ -123,11 +156,13 @@ var _Dialog_serviceDesc = grpc.ServiceDesc{
 			MethodName: "DetectTextIntent",
 			Handler:    _Dialog_DetectTextIntent_Handler,
 		},
+	},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "DetectAudioIntent",
-			Handler:    _Dialog_DetectAudioIntent_Handler,
+			StreamName:    "DetectAudioIntentStream",
+			Handler:       _Dialog_DetectAudioIntentStream_Handler,
+			ClientStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "dialog.proto",
 }
