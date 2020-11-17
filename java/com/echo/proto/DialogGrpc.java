@@ -59,34 +59,34 @@ public final class DialogGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<com.echo.proto.AudioProto.AudioSample,
-      com.echo.proto.DialogProto.Intent> getDetectAudioIntentStreamMethod;
+      com.echo.proto.DialogProto.Intent> getDetectAudioIntentMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "DetectAudioIntentStream",
+      fullMethodName = SERVICE_NAME + '/' + "DetectAudioIntent",
       requestType = com.echo.proto.AudioProto.AudioSample.class,
       responseType = com.echo.proto.DialogProto.Intent.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING)
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<com.echo.proto.AudioProto.AudioSample,
-      com.echo.proto.DialogProto.Intent> getDetectAudioIntentStreamMethod() {
-    io.grpc.MethodDescriptor<com.echo.proto.AudioProto.AudioSample, com.echo.proto.DialogProto.Intent> getDetectAudioIntentStreamMethod;
-    if ((getDetectAudioIntentStreamMethod = DialogGrpc.getDetectAudioIntentStreamMethod) == null) {
+      com.echo.proto.DialogProto.Intent> getDetectAudioIntentMethod() {
+    io.grpc.MethodDescriptor<com.echo.proto.AudioProto.AudioSample, com.echo.proto.DialogProto.Intent> getDetectAudioIntentMethod;
+    if ((getDetectAudioIntentMethod = DialogGrpc.getDetectAudioIntentMethod) == null) {
       synchronized (DialogGrpc.class) {
-        if ((getDetectAudioIntentStreamMethod = DialogGrpc.getDetectAudioIntentStreamMethod) == null) {
-          DialogGrpc.getDetectAudioIntentStreamMethod = getDetectAudioIntentStreamMethod =
+        if ((getDetectAudioIntentMethod = DialogGrpc.getDetectAudioIntentMethod) == null) {
+          DialogGrpc.getDetectAudioIntentMethod = getDetectAudioIntentMethod =
               io.grpc.MethodDescriptor.<com.echo.proto.AudioProto.AudioSample, com.echo.proto.DialogProto.Intent>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "DetectAudioIntentStream"))
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "DetectAudioIntent"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   com.echo.proto.AudioProto.AudioSample.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   com.echo.proto.DialogProto.Intent.getDefaultInstance()))
-              .setSchemaDescriptor(new DialogMethodDescriptorSupplier("DetectAudioIntentStream"))
+              .setSchemaDescriptor(new DialogMethodDescriptorSupplier("DetectAudioIntent"))
               .build();
         }
       }
     }
-    return getDetectAudioIntentStreamMethod;
+    return getDetectAudioIntentMethod;
   }
 
   /**
@@ -125,9 +125,9 @@ public final class DialogGrpc {
 
     /**
      */
-    public io.grpc.stub.StreamObserver<com.echo.proto.AudioProto.AudioSample> detectAudioIntentStream(
+    public void detectAudioIntent(com.echo.proto.AudioProto.AudioSample request,
         io.grpc.stub.StreamObserver<com.echo.proto.DialogProto.Intent> responseObserver) {
-      return asyncUnimplementedStreamingCall(getDetectAudioIntentStreamMethod(), responseObserver);
+      asyncUnimplementedUnaryCall(getDetectAudioIntentMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
@@ -140,12 +140,12 @@ public final class DialogGrpc {
                 com.echo.proto.DialogProto.Intent>(
                   this, METHODID_DETECT_TEXT_INTENT)))
           .addMethod(
-            getDetectAudioIntentStreamMethod(),
-            asyncClientStreamingCall(
+            getDetectAudioIntentMethod(),
+            asyncUnaryCall(
               new MethodHandlers<
                 com.echo.proto.AudioProto.AudioSample,
                 com.echo.proto.DialogProto.Intent>(
-                  this, METHODID_DETECT_AUDIO_INTENT_STREAM)))
+                  this, METHODID_DETECT_AUDIO_INTENT)))
           .build();
     }
   }
@@ -178,10 +178,10 @@ public final class DialogGrpc {
 
     /**
      */
-    public io.grpc.stub.StreamObserver<com.echo.proto.AudioProto.AudioSample> detectAudioIntentStream(
+    public void detectAudioIntent(com.echo.proto.AudioProto.AudioSample request,
         io.grpc.stub.StreamObserver<com.echo.proto.DialogProto.Intent> responseObserver) {
-      return asyncClientStreamingCall(
-          getChannel().newCall(getDetectAudioIntentStreamMethod(), getCallOptions()), responseObserver);
+      asyncUnaryCall(
+          getChannel().newCall(getDetectAudioIntentMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -208,6 +208,13 @@ public final class DialogGrpc {
     public com.echo.proto.DialogProto.Intent detectTextIntent(com.echo.proto.DialogProto.Detect request) {
       return blockingUnaryCall(
           getChannel(), getDetectTextIntentMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public com.echo.proto.DialogProto.Intent detectAudioIntent(com.echo.proto.AudioProto.AudioSample request) {
+      return blockingUnaryCall(
+          getChannel(), getDetectAudioIntentMethod(), getCallOptions(), request);
     }
   }
 
@@ -236,10 +243,18 @@ public final class DialogGrpc {
       return futureUnaryCall(
           getChannel().newCall(getDetectTextIntentMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.echo.proto.DialogProto.Intent> detectAudioIntent(
+        com.echo.proto.AudioProto.AudioSample request) {
+      return futureUnaryCall(
+          getChannel().newCall(getDetectAudioIntentMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_DETECT_TEXT_INTENT = 0;
-  private static final int METHODID_DETECT_AUDIO_INTENT_STREAM = 1;
+  private static final int METHODID_DETECT_AUDIO_INTENT = 1;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -262,6 +277,10 @@ public final class DialogGrpc {
           serviceImpl.detectTextIntent((com.echo.proto.DialogProto.Detect) request,
               (io.grpc.stub.StreamObserver<com.echo.proto.DialogProto.Intent>) responseObserver);
           break;
+        case METHODID_DETECT_AUDIO_INTENT:
+          serviceImpl.detectAudioIntent((com.echo.proto.AudioProto.AudioSample) request,
+              (io.grpc.stub.StreamObserver<com.echo.proto.DialogProto.Intent>) responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -272,9 +291,6 @@ public final class DialogGrpc {
     public io.grpc.stub.StreamObserver<Req> invoke(
         io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
-        case METHODID_DETECT_AUDIO_INTENT_STREAM:
-          return (io.grpc.stub.StreamObserver<Req>) serviceImpl.detectAudioIntentStream(
-              (io.grpc.stub.StreamObserver<com.echo.proto.DialogProto.Intent>) responseObserver);
         default:
           throw new AssertionError();
       }
@@ -327,7 +343,7 @@ public final class DialogGrpc {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new DialogFileDescriptorSupplier())
               .addMethod(getDetectTextIntentMethod())
-              .addMethod(getDetectAudioIntentStreamMethod())
+              .addMethod(getDetectAudioIntentMethod())
               .build();
         }
       }

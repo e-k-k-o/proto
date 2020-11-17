@@ -41,7 +41,7 @@ build:
 	@echo -en "\033c"
 	@echo "$(LIGHTBLUE) > Starting build $(BLUE)$(PROJECTNAME) $(YELLOW)$(BRANCHENAME)$(RESET)"
 	@rm -rf ${pwd}/go && mkdir ${pwd}/go
-	@protoc --go_out=plugins=grpc:go *.proto
+	@protoc --go_out=go --go-grpc_out=go *.proto
 	@rm -rf ${pwd}/java && mkdir ${pwd}/java
 	@protoc --plugin=protoc-gen-grpc-java=${pwd}/bin/protoc-gen-grpc-java --grpc-java_out=grpc:java *.proto
 #	@rm -rf ${pwd}/js && mkdir ${pwd}/js

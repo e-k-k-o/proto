@@ -12,7 +12,7 @@ import "context.proto";
 
 service Dialog {
   rpc DetectTextIntent (Detect) returns (Intent);
-  rpc DetectAudioIntentStream (stream AudioSample) returns (Intent);
+  rpc DetectAudioIntent (AudioSample) returns (Intent);
 }
 
 message Detect {
